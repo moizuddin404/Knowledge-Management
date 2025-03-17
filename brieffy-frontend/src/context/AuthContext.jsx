@@ -1,0 +1,1 @@
+// Manages user authentication (Google OAuth login/logout).
