@@ -6,3 +6,7 @@ pyjwt
 pydantic
 pydantic[email]
 email-validator
+<<<<<<< HEAD
+=======
+pymongo
+>>>>>>> 5e2751485f924dd5db2806d711f1ae416a44dc5b
