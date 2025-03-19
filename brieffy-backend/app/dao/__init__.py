@@ -1,3 +1,8 @@
 from .knowledge_card_dao import KnowledgeCardDao
+from .user_dao import UserDAO
 
-__all__ = ["KnowledgeCardDao"]
+user_dao = UserDAO()
+
+
+__all__ = ["user_dao", "KnowledgeCardDao"]
+
