@@ -1,11 +1,19 @@
 # === Python / FastAPI ===
+<<<<<<< HEAD
 _pycache_/
+=======
+__pycache__/
+>>>>>>> 7dfa5b6008afc106fe62d6167a20998f7f16eda6
 *.py[cod]
 *$py.class
 
 # Virtual environments
 .venv/
 env/
+<<<<<<< HEAD
+=======
+../.env
+>>>>>>> 7dfa5b6008afc106fe62d6167a20998f7f16eda6
 venv/
 ENV/
 
@@ -71,4 +79,8 @@ ehthumbs.db
 
 # === Common ===
 *.bak
+<<<<<<< HEAD
 *.tmp
+=======
+*.tmp
+>>>>>>> 7dfa5b6008afc106fe62d6167a20998f7f16eda6

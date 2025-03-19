@@ -3,6 +3,7 @@ from .srapper import Scraper
 from .ai_text_processor import TextProcessor
 from .embedder import embed_text
 from .title import get_title
+from .custom_exceptions import DatabaseError, NotFoundError
 
 scrapper = Scraper()
 text_processor = TextProcessor()
