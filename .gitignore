@@ -1,2 +1,74 @@
+# === Python / FastAPI ===
+_pycache_/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Environment variables
 .env
-__pycache__
+.env.*
+
+# Logs
+*.log
+
+# macOS system files
+.DS_Store
+
+# IDE / editor settings
+.vscode/
+.idea/
+*.swp
+
+# Python egg metadata
+*.egg-info/
+dist/
+build/
+
+# Database and system files
+*.sqlite3
+
+# Coverage and testing
+htmlcov/
+.coverage
+.coverage.*
+.mypy_cache/
+.pytest_cache/
+.cache/
+
+# Docker
+*.pid
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# VS Code extension stuff
+.history/
+
+# Alembic migrations (if used)
+migrations/
+
+# === Vite + React Frontend ===
+node_modules/
+dist/
+build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+.pnpm-store/
+.vite/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+*.stackdump
+
+# === Common ===
+*.bak
+*.tmp
