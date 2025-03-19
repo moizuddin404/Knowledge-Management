@@ -1,11 +1,23 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from datetime import datetime
+
+class KnowledgeCard(BaseModel):
+    user_id: str
+    title: str
+    summary: str
+    tags: list
+    note: str
+    created_at: datetime
+    embedded_vector: list
+    source_url: str
 
 class KnowledgeCardRequest(BaseModel):
-    userId: str
-    sourceURL: EmailStr
+    token: str
+    source_url: str
     note: str
 
 class KnowledgeCardResponse(BaseModel):
     message: str
-    knowledgeCardId: str
+    knowledge_card_id: str
+    title: str
 
