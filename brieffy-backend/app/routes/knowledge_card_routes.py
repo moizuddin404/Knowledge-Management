@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from models import KnowledgeCardRequest, KnowledgeCardResponse
 from utils import decode_access_token
 from services import knowledge_card_service
@@ -19,5 +20,12 @@ async def add_knowledge_card(knowledge_card_data:KnowledgeCardRequest):
     #     knowledgeCardId=card_id,
     #     title=title
     # )
-    return card_data
+    return JSONResponse({ "message": "Knowledge card '{card_data}' added successfully" })
+
+@knowledge_card_router.get("/")
+async def get_knowledge_card(token:str):
+    """API endpoint to get all cards of the user"""
+    print(token)
+    all_cards = knowledge_card_service.get_all_cards(token)
+    return all_cards
     

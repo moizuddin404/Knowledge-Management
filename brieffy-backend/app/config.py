@@ -9,3 +9,5 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
     OPEN_API_KEY = os.getenv("OPEN_API_KEY")
     OPEN_API_BASE = os.getenv("OPEN_API_BASE")
+    HF_MODEL_ID = os.getenv("HF_MODEL_ID")
+    HF_TOKEN = os.getenv("HF_TOKEN")

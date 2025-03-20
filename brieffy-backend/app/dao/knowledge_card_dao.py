@@ -1,6 +1,7 @@
 from bson import ObjectId
 from datetime import datetime
 from database import db_instance
+from models import KnowledgeCard
 
 class KnowledgeCardDao:
     def __init__(self):
@@ -33,5 +34,27 @@ class KnowledgeCardDao:
             "embeddedVector": embedding,
             "sourceURL": source_url
         }
-        result = self.knowledge_cards_collection.insert_one(knowledge_card)
-        return str(result.inserted_id), title
+        self.knowledge_cards_collection.insert_one(knowledge_card)
+        return title
+    
+    def get_all_cards(self,user_id:str):
+        """
+        Usage: Retrieve all knowledge cards for a specific user.
+        Parameters: user_id (str): The ID of the user whose cards are to be retrieved.
+        Returns: list: A list of knowledge cards.
+        """
+        cards = self.knowledge_cards_collection.find({"userID": ObjectId(user_id)})
+
+        return [
+            KnowledgeCard(
+                user_id=str(card["userID"]),
+                title=card.get("title", ""),
+                summary=card.get("summary", ""),
+                tags=card.get("tags", []),
+                note=card.get("note", ""),
+                created_at=card.get("createdAt", ""),
+                embedded_vector=card.get("embeddedVector", []),
+                source_url=card.get("sourceURL", "")
+            )
+            for card in cards
+        ]

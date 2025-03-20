@@ -1,4 +1,4 @@
-from utils import scrapper, text_processor, embed_text, get_title, decode_access_token
+from utils import scrapper, text_processor, decode_access_token, embedder_for_title
 from models import KnowledgeCardRequest
 from dao import knowledge_card_dao
 
@@ -25,37 +25,68 @@ class KnowledgeCardService:
         """
         try:
             decoded_token = decode_access_token(knowledge_card_data.token)
+            
             user_id = decoded_token["userId"]
+            note = knowledge_card_data.note
+            source_url = knowledge_card_data.source_url
+
             # Scrape content from the given URL
-            content = scrapper.scrape_web(knowledge_card_data.source_url)
+            content = scrapper.scrape_web(source_url)
             if not content:
                 return None  
 
             # Extract and clean body content
             body_content = scrapper.extract_body_content(content)
-            print(body_content)
+            # print(body_content)
             cleaned_content = scrapper.clean_body_content(body_content)
-            print(cleaned_content)
+            # print(cleaned_content)
             chunks = scrapper.split_content(cleaned_content)
-            print(chunks)
+            # print(chunks)
 
-            # Extract title and process text
-            title = get_title()
-            print("\ntitle", title)
             summary = text_processor.summarize_text(chunks)
-            print("\nSummary", summary)
+            # print("\nSummary", summary)
+            # Extract title and process text
+            title = text_processor.get_title(summary)
+            print("\ntitle000000", title)
+            # extract tags from suummary
             tags = text_processor.generate_tags(summary)
-            embedding = embed_text()
+            print(tags)
+            embedding = embedder_for_title.embed_text(title)
+            print(embedding)
 
-            print(title, summary, tags, embedding)
+            # print(title, summary, tags, embedding)
             # Store knowledge card in the database
-            card_id, card_title = knowledge_card_dao.insert_knowledge_card(
-                user_id, title, summary, tags, knowledge_card_data.note, embedding, knowledge_card_data.source_url
+            card_data = knowledge_card_dao.insert_knowledge_card(
+                user_id, title, summary, tags, note, embedding, source_url
             )
-            return card_id, card_title
+            return card_data
 
         except Exception as exception:
             print(f"Error processing knowledge card: {exception}")
             return None  
         
-        
+    def get_all_cards(self, token:str):
+        """
+        Usage: Retrieve all knowledge cards for a specific user.
+        Parameters: token (str): The access token of the user whose cards are to be retrieved.
+        Returns: list: A list of knowledge cards.
+        """
+        print("tokkennn", token)
+        decoded_token = decode_access_token(token)
+        print("printing decoded token00")
+        print(decoded_token)
+        user_id = decoded_token["userId"]
+
+        all_cards = knowledge_card_dao.get_all_cards(user_id)
+
+        card_details = []
+        for card in all_cards:
+            card_details.append({
+                "title": card.title,
+                "summary": card.summary,
+                "note": card.note,
+                "tags":card.tags,
+                "source_url": card.source_url
+            })
+                
+        return card_details

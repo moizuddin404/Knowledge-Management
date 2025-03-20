@@ -2,6 +2,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from config import Config
+import re
 
 class TextProcessor:
     
@@ -15,9 +16,12 @@ class TextProcessor:
         Returns:
         - str: Generated tags
         """
+        base_url = Config.OPEN_API_BASE
+        api_key = Config.OPEN_API_KEY
+
         client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key="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"
+            base_url= base_url,
+            api_key= api_key
         )
         completion = client.chat.completions.create(
             model="deepseek/deepseek-r1:free",
@@ -31,12 +35,18 @@ class TextProcessor:
                     2. Include only major topics and keywords.
                     3. Avoid duplicates.
                     4. Only give top {max_tags} tags.
+                    5. Return the tags as a **comma-separated list** (e.g., AI, Machine Learning, Deep Learning).
+
                     """
                 }
             ]
         )
-        tags = completion.choices[0].message.content
-        return tags
+        tags = completion.choices[0].message.content.strip()
+
+        # Split by commas and remove any surrounding spaces
+        tags_list = [tag.strip() for tag in tags.replace("\n", "").split(",") if tag.strip()]  
+
+        return tags_list
     
     
     
@@ -50,9 +60,12 @@ class TextProcessor:
         Returns:
         - str: Combined summary of all chunks
         """
+        base_url = Config.OPEN_API_BASE
+        api_key = Config.OPEN_API_KEY
+
         client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key="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"
+            base_url= base_url,
+            api_key= api_key
         )
         summarized_data = []
         for chunk in chunks:
@@ -78,38 +91,38 @@ class TextProcessor:
 
         return final_summary
     
+    def get_title(self,summary):
 
-# ---------------------------- #
-# Main Execution (Test Run)
-# ---------------------------- #
-# if __name__ == "__main__":
-#     processor = TextProcessor()
+        client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key="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"
+            )
+        
+        # Generate title based on the final summary
+        title_completion = client.chat.completions.create(
+            model="deepseek/deepseek-r1:free",
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"""Generate a concise and engaging title based on the following summary:\n\n
+                    {summary}\n\n
+                    ### Title Guidelines:
+                    1. **Short & Catchy:** Keep the title concise and attention-grabbing.
+                    2. **Reflect the Summary:** Ensure the title accurately represents the main idea.
+                    3. **Avoid Clickbait:** The title should be informative.
+                    4. **Max 8 Words:** Keep the title brief and impactful.
+                    """
+                }
+            ]
+        )
 
-#     # Example content to process
-#     sample_content = """Humans first
-#         We’re building a humans-first platform. This feature is part of our philosophy of building a better internet. Featured Stories are another way that the Medium feed is curated by real humans with subject-matter expertise, not just algorithms.
-#         Medium readers want substance and deeper understanding. It is now common on Medium that the top recommendations for readers have been vetted by at least two humans ahead of you — checking for quality, authenticity, depth, research, impact, and all of the things that make it likely that a story you read here will deepen your understanding of the world. (It’s also this human vetting that does the heroic work of holding back the AI slop from taking over your feeds.)
-#         The bigger picture When readers come to Medium, we aim to recommend high-quality stories through the human curation that powers our systems. A big part of this is our Boost program, which helps us work directly with publication editors to find great writing across all corners of Medium. More than one million people pay for a Medium membership because they get a reliably great reading experience here.
-#         Our systems are based on human curation because writing is inherently human. That’s what we mean by putting humans first. You write to think and to develop your ideas for readers, not for an algorithm. Reading is just as human. Readers look for good stories in order to better understand the world. When writing is done well — with context, knowledge, and nuance — then a writer’s wisdom passes onto their readers.
-#         But a shared, universal definition of what makes a story good does not exist. Quality is subjective because humans are unique. Story Featuring is a way to recognize and celebrate the expertise and unique perspectives that editors bring to Medium.
-#         Publications are the heart of community on Medium. Publication editors recognize, curate, and share ideas with their communities. They serve an important role to help connect readers with great writing and help stories find the right audience. Now, they can do that with more power.
-#         At Medium, everything we do connects to humans, from our membership model to our curation systems to our community of readers. What matters isn’t an updated functionality in our product; it’s how you all use these features, and how the stories we all read will change as a result. I used the word test in the introduction of this story because there’s more coming. If you have feedback, we’re listening — leave a response here to share."""
-#     sample_chunks = ["""Humans first
-#         We’re building a humans-first platform. This feature is part of our philosophy of building a better internet. Featured Stories are another way that the Medium feed is curated by real humans with subject-matter expertise, not just algorithms.
-#         Medium readers want substance and deeper understanding. It is now common on Medium that the top recommendations for readers have been vetted by at least two humans ahead of you — checking for quality, authenticity, depth, research, impact, and all of the things that make it likely that a story you read here will deepen your understanding of the world. (It’s also this human vetting that does the heroic work of holding back the AI slop from taking over your feeds.)
-#         The bigger picture When readers come to Medium, we aim to recommend high-quality stories through the human curation that powers our systems. A big part of this is our Boost program, which helps us work directly with publication editors to find great writing across all corners of Medium. More than one million people pay for a Medium membership because they get a reliably great reading experience here.
-#         Our systems are based on human curation because writing is inherently human. That’s what we mean by putting humans first. You write to think and to develop your ideas for readers, not for an algorithm. Reading is just as human. Readers look for good stories in order to better understand the world. When writing is done well — with context, knowledge, and nuance — then a writer’s wisdom passes onto their readers.
-#         But a shared, universal definition of what makes a story good does not exist. Quality is subjective because humans are unique. Story Featuring is a way to recognize and celebrate the expertise and unique perspectives that editors bring to Medium.
-#         Publications are the heart of community on Medium. Publication editors recognize, curate, and share ideas with their communities. They serve an important role to help connect readers with great writing and help stories find the right audience. Now, they can do that with more power.
-#         At Medium, everything we do connects to humans, from our membership model to our curation systems to our community of readers. What matters isn’t an updated functionality in our product; it’s how you all use these features, and how the stories we all read will change as a result. I used the word test in the introduction of this story because there’s more coming. If you have feedback, we’re listening — leave a response here to share."""
-#         ]
+        title = title_completion.choices[0].message.content.strip()  # Extract title and remove extra spaces
+        title = title.split("\n")[0].strip()  #getting 1st line from response
+        
+        # Remove "**Title:**" or "*Title:*" if present
+        clean_title = re.sub(r"^\**Title:\**\s*", "", title)
 
-#     # Generate tags
-#     print("\nGenerating Tags:")
-#     tags = processor.generate_tags(sample_content)
-#     print(tags)
+        # Remove any leading/trailing asterisks
+        clean_title = clean_title.strip("*")
 
-#     # Summarize content
-#     print("\nSummarizing Text:")
-#     summary = processor.summarize_text(sample_chunks)
-#     print(summary)
+        return title
