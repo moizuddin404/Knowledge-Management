@@ -24,7 +24,7 @@ class AuthService:
                 user_id = user_dao.create_user(user_data)
                 status = "new"
             
-            token_payload = {"userId": user_id,"email": user_data.email}
+            token_payload = {"userId": user_id,"email": user_data.email,"name": user_data.name, "picture": user_data.picture}
             token = create_access_token(token_payload)
 
             return{"message": f"User {status}", "token": token}

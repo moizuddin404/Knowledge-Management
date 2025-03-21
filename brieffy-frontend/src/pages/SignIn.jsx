@@ -1,13 +1,16 @@
-import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../css/SignIn.css";
 import "../css/LogoutButton.css"
+import { useAuth } from "../hooks/useAuth";
+
 
 const SignIn = () => {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const navigate = useNavigate();
+  const { login } = useAuth()
 
   const handleSuccess = async (response) => {
     try {
@@ -22,11 +25,11 @@ const SignIn = () => {
 
       const res = await axios.post(`${backendUrl}/api/auth/google`, userData);
       if (res.data && res.data.token) {
-          localStorage.setItem("token", res.data.token);
+          login(res.data.token);
       }
 
-      {/*Redirecting to Home after Logging in */}
-      window.location.href = "/home";
+      // Redirecting to Home after Logging in 
+      navigate('/home')
     } catch (error) {
       console.error("Login failed", error);
       alert("Login failed");
@@ -47,7 +50,7 @@ const SignIn = () => {
           <div className="logo">
             <img src="Brieffy_Logo-withoutbg_zoom.png" alt="Brieffy Logo" />
           </div>
-          
+          <div className="card-container">
           {/* Sign-in content */}
           <div className="welcome-text">
             <h1>Welcome to Brieffy</h1>
@@ -60,15 +63,16 @@ const SignIn = () => {
             <div>
       
       <GoogleLogin 
-        clientId={clientId} 
-        buttonText="Sign in with Google" 
         onSuccess={handleSuccess} 
         onFailure={handleFailure} 
         shape="pill"
         cookiePolicy={"single_host_origin"} 
         isSignedIn = {true}
+        ux_mode="popup"
+        scope="profile email"
       />
     </div>
+          </div>
           </div>
         </div>
       </div>
@@ -76,7 +80,7 @@ const SignIn = () => {
       {/* Right side - Illustration */}
       <div className="signin-illustration">
         {/* This is where you'll place your mountain image */}
-        <img src="Sign_in_Page..png" alt="Mountains illustration" className="mountains-image" />
+        <img src="signInCoverPhoto.jpg" alt="Mountains illustration" className="mountains-image" />
       </div>
     </div>
   );
