@@ -11,14 +11,19 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+
+const pages = ['Home', 'Suites', 'About Us'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -36,10 +41,9 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{bgcolor: "#e7faf5"}} elevation={0}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -55,17 +59,16 @@ function Navbar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }}}>
             <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              sx={{color: "#1f7281"}}
             >
               <MenuIcon />
             </IconButton>
@@ -86,13 +89,19 @@ function Navbar() {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                <MenuItem key={page} onClick={()=>{handleCloseNavMenu(); if(page === 'Home') {
+                  navigate('/home');
+                }
+                else if(page === 'Suites') {
+                  navigate('/suites')
+                }
+                }}>
+                  <Typography sx={{ textAlign: 'left' }}>{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <img src='Brieffy_Logo-withoutbg_zoom.png' width={'150px'}  style={{marginLeft: '20px'}}/>
           <Typography
             variant="h5"
             noWrap
@@ -109,25 +118,39 @@ function Navbar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } , justifyContent: 'flex-end'}}>
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                onClick={()=>{handleCloseNavMenu(); if(page === 'Home') {
+                  navigate('/home');
+                }
+                else if(page === 'Suites') {
+                  navigate('/suites')
+                }
+                }}
+                sx={{ my: 2, color: '#14304e', display: 'block' }}
               >
                 {page}
               </Button>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
+          <Box sx={{ flexGrow: 0, pl: 7 }}>
+          <Tooltip title="Open settings">
+  <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleOpenUserMenu}>
+  {/* Google-hosted images often block third-party referrers — adding referrerPolicy="no-referrer" tells the browser not to send referrer info, so Google allows the image load */}
+  <Avatar 
+      alt={user?.name} 
+      src={user?.picture} 
+      referrerPolicy="no-referrer"
+      sx={{ width: 40, height: 40, mr: 1 }}
+    > {user?.name?.charAt(0)}</Avatar>
+    <Typography sx={{ color: '#14304e', fontWeight: 600 }}>
+      {user?.name}
+    </Typography>
+  </Box>
+</Tooltip>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -145,7 +168,10 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={()=>{handleCloseUserMenu(); if(setting === 'Logout') {
+                  logout();
+                  navigate("/")
+                }}}>
                   <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                 </MenuItem>
               ))}

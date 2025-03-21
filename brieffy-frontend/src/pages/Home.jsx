@@ -2,14 +2,12 @@
 
 import React from "react";
 import Navbar from "../components/Navbar";
-import Logout from "../components/LogoutButton";
+import "../css/Home.css";
 
 const Home = () => {
   return (
-    <div>
+    <div className="home-container">
       <Navbar />
-      <h1>Welcome to Brieffy</h1>
-      <Logout></Logout>
     </div>
   );
 };
